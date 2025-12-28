@@ -1,5 +1,3 @@
-// SpawnPoint.h
-
 #pragma once
 
 #include "CoreMinimal.h"
@@ -9,6 +7,11 @@
 
 class USceneComponent;
 class USpawnTable;
+
+#if WITH_EDITORONLY_DATA
+class UBillboardComponent;
+class UArrowComponent;
+#endif
 
 UCLASS(Blueprintable)
 class SECRETPEPPERGAME_API ASpawnPoint : public AActor
@@ -44,7 +47,16 @@ public:
 
 	void SetCurrentSpawn(AActor* Spawned);
 
+#if WITH_EDITORONLY_DATA
+	UPROPERTY(VisibleAnywhere, Category = "Editor")
+	UBillboardComponent* EditorSprite = nullptr;
+
+	UPROPERTY(VisibleAnywhere, Category = "Editor")
+	UArrowComponent* EditorArrow = nullptr;
+#endif
+
 private:
 	UPROPERTY()
 	AActor* CurrentSpawn = nullptr;
 };
+

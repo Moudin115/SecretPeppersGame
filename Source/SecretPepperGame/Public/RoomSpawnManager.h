@@ -1,5 +1,3 @@
-// RoomSpawnManager.h
-
 #pragma once
 
 #include "CoreMinimal.h"
@@ -12,14 +10,29 @@ class SECRETPEPPERGAME_API ARoomSpawnManager : public AActor
 	GENERATED_BODY()
 
 public:
-	// Sets default values
 	ARoomSpawnManager();
 
-	// Simple proof-of-life function you can call from Blueprint
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Spawn Surface")
+	bool bSnapToSurface = true;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Spawn Surface")
+	bool bAlignToSurfaceNormal = false;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Spawn Surface", meta = (ClampMin = "0.0"))
+	float SurfaceOffset = 2.0f;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Spawn Surface", meta = (ClampMin = "0.0"))
+	float TraceUp = 200.0f;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Spawn Surface", meta = (ClampMin = "0.0"))
+	float TraceDown = 2000.0f;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Spawn Surface")
+	TEnumAsByte<ECollisionChannel> TraceChannel = ECC_Visibility;
+
 	UFUNCTION(BlueprintCallable, Category = "Spawn")
-	void TestSpawn();
+	void SpawnForRoom();
 
 protected:
-	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 };

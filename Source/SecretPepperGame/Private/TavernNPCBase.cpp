@@ -95,8 +95,7 @@ FText ATavernNPCBase::GetInteractPrompt_Implementation() const
 
 void ATavernNPCBase::Interact_Implementation(APawn* Interactor)
 {
-	// Keep this empty in C++ for now, implement in Blueprint by overriding Interact on the NPC blueprint if you want,
-	// or call a BP event from here later when you have a dialogue widget.
+	BP_OnInteract(Interactor);
 }
 
 

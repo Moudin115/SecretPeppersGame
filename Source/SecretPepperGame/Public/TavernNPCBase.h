@@ -53,8 +53,10 @@ protected:
 	UFUNCTION(BlueprintImplementableEvent, Category = "Tavern")
 	void BP_OnPresenceChanged(ETavernNpcPresence NewPresence);
 
+
 	UFUNCTION(BlueprintImplementableEvent, Category = "Interact")
 	void BP_OnInteract(APawn* Interactor);
+
 
 public:
 	virtual bool CanInteract_Implementation(APawn* Interactor) const override;

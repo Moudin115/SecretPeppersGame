@@ -1,4 +1,3 @@
-// Interactable.h
 #pragma once
 
 #include "CoreMinimal.h"
@@ -6,12 +5,12 @@
 #include "Interactable.generated.h"
 
 UINTERFACE(BlueprintType)
-class SECRETPEPPERGAME_API UInteractable : public UInterface
+class UInteractable : public UInterface
 {
 	GENERATED_BODY()
 };
 
-class SECRETPEPPERGAME_API IInteractable
+class IInteractable
 {
 	GENERATED_BODY()
 

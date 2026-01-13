@@ -1,3 +1,4 @@
+// TavernSubsystem.cpp
 #include "TavernSubsystem.h"
 
 void UTavernSubsystem::Initialize(FSubsystemCollectionBase& Collection)
@@ -5,6 +6,7 @@ void UTavernSubsystem::Initialize(FSubsystemCollectionBase& Collection)
 	Super::Initialize(Collection);
 
 	State.TimeOfDay = ETavernTimeOfDay::Day;
+	State.DayNr = 1;
 	State.Vibe = 0;
 	State.Cleanliness = 0;
 
@@ -14,9 +16,8 @@ void UTavernSubsystem::Initialize(FSubsystemCollectionBase& Collection)
 	Inventory.Add(ETavernIngredient::Herb, 0);
 	Inventory.Add(ETavernIngredient::Ash, 0);
 
-	State.Coins = 10;        
+	State.Coins = 10;
 	State.PreparedFood = 0;
-
 }
 
 void UTavernSubsystem::Deinitialize()
@@ -28,6 +29,29 @@ void UTavernSubsystem::Deinitialize()
 const FTavernState& UTavernSubsystem::GetState() const
 {
 	return State;
+}
+
+int32 UTavernSubsystem::GetDayNr() const
+{
+	return State.DayNr;
+}
+
+void UTavernSubsystem::SetDayNr(int32 NewDayNr)
+{
+	NewDayNr = FMath::Max(1, NewDayNr);
+
+	if (State.DayNr == NewDayNr)
+	{
+		return;
+	}
+
+	State.DayNr = NewDayNr;
+	OnDayChanged.Broadcast(State.DayNr);
+}
+
+void UTavernSubsystem::AdvanceDay()
+{
+	SetDayNr(State.DayNr + 1);
 }
 
 int32 UTavernSubsystem::ClampVibe(int32 InVibe) const
@@ -59,6 +83,7 @@ void UTavernSubsystem::FlipTimeOfDay()
 	}
 	else
 	{
+		AdvanceDay();
 		SetTimeOfDay(ETavernTimeOfDay::Day);
 	}
 }
@@ -152,6 +177,8 @@ void UTavernSubsystem::AddPreparedFood(int32 Amount)
 
 bool UTavernSubsystem::ConsumePreparedFood(int32 Amount)
 {
+	if (Amount <= 0) return true;
+
 	if (State.PreparedFood < Amount)
 	{
 		return false;
@@ -160,7 +187,6 @@ bool UTavernSubsystem::ConsumePreparedFood(int32 Amount)
 	State.PreparedFood -= Amount;
 	return true;
 }
-
 
 void UTavernSubsystem::ClearInventory()
 {
@@ -193,4 +219,3 @@ bool UTavernSubsystem::SpendCoins(int32 Amount)
 	State.Coins -= Amount;
 	return true;
 }
-

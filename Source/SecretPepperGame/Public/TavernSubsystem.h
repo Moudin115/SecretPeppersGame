@@ -1,3 +1,4 @@
+// TavernSubsystem.h
 #pragma once
 
 #include "CoreMinimal.h"
@@ -29,6 +30,9 @@ struct FTavernState
 	ETavernTimeOfDay TimeOfDay = ETavernTimeOfDay::Day;
 
 	UPROPERTY(BlueprintReadOnly, Category = "Tavern")
+	int32 DayNr = 1;
+
+	UPROPERTY(BlueprintReadOnly, Category = "Tavern")
 	int32 Vibe = 0;
 
 	UPROPERTY(BlueprintReadOnly, Category = "Tavern")
@@ -44,6 +48,7 @@ struct FTavernState
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FTavernTimeChanged, ETavernTimeOfDay, NewTime);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FTavernVibeChanged, int32, NewVibe);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FTavernCleanlinessChanged, int32, NewCleanliness);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FTavernDayChanged, int32, NewDayNr);
 
 UCLASS(BlueprintType)
 class SECRETPEPPERGAME_API UTavernSubsystem : public UGameInstanceSubsystem
@@ -56,6 +61,15 @@ public:
 
 	UFUNCTION(BlueprintPure, Category = "Tavern")
 	const FTavernState& GetState() const;
+
+	UFUNCTION(BlueprintPure, Category = "Tavern")
+	int32 GetDayNr() const;
+
+	UFUNCTION(BlueprintCallable, Category = "Tavern")
+	void SetDayNr(int32 NewDayNr);
+
+	UFUNCTION(BlueprintCallable, Category = "Tavern")
+	void AdvanceDay();
 
 	UFUNCTION(BlueprintCallable, Category = "Tavern")
 	void SetTimeOfDay(ETavernTimeOfDay NewTime);
@@ -74,9 +88,6 @@ public:
 
 	UFUNCTION(BlueprintCallable, Category = "Tavern")
 	void AddCleanliness(int32 Delta);
-
-	
-
 
 	UFUNCTION(BlueprintCallable, Category = "Tavern|Inventory")
 	int32 GetIngredientCount(ETavernIngredient Type) const;
@@ -102,6 +113,14 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Tavern|Food")
 	bool ConsumePreparedFood(int32 Amount);
 
+	UFUNCTION(BlueprintCallable, Category = "Tavern|Currency")
+	int32 GetCoins() const;
+
+	UFUNCTION(BlueprintCallable, Category = "Tavern|Currency")
+	void AddCoins(int32 Amount);
+
+	UFUNCTION(BlueprintCallable, Category = "Tavern|Currency")
+	bool SpendCoins(int32 Amount);
 
 	UPROPERTY(BlueprintAssignable, Category = "Tavern|Events")
 	FTavernTimeChanged OnTimeChanged;
@@ -112,15 +131,8 @@ public:
 	UPROPERTY(BlueprintAssignable, Category = "Tavern|Events")
 	FTavernCleanlinessChanged OnCleanlinessChanged;
 
-	UFUNCTION(BlueprintCallable, Category = "Tavern|Currency")
-	int32 GetCoins() const;
-
-	UFUNCTION(BlueprintCallable, Category = "Tavern|Currency")
-	void AddCoins(int32 Amount);
-
-	UFUNCTION(BlueprintCallable, Category = "Tavern|Currency")
-	bool SpendCoins(int32 Amount);
-
+	UPROPERTY(BlueprintAssignable, Category = "Tavern|Events")
+	FTavernDayChanged OnDayChanged;
 
 protected:
 	UPROPERTY(BlueprintReadOnly, Category = "Tavern")

@@ -171,13 +171,19 @@ int32 UTavernSubsystem::GetPreparedFood() const
 
 void UTavernSubsystem::AddPreparedFood(int32 Amount)
 {
-	if (Amount <= 0) return;
+	if (Amount <= 0)
+	{
+		return;
+	}
 	State.PreparedFood += Amount;
 }
 
 bool UTavernSubsystem::ConsumePreparedFood(int32 Amount)
 {
-	if (Amount <= 0) return true;
+	if (Amount <= 0)
+	{
+		return true;
+	}
 
 	if (State.PreparedFood < Amount)
 	{
@@ -203,13 +209,19 @@ int32 UTavernSubsystem::GetCoins() const
 
 void UTavernSubsystem::AddCoins(int32 Amount)
 {
-	if (Amount <= 0) return;
+	if (Amount <= 0)
+	{
+		return;
+	}
 	State.Coins += Amount;
 }
 
 bool UTavernSubsystem::SpendCoins(int32 Amount)
 {
-	if (Amount <= 0) return true;
+	if (Amount <= 0)
+	{
+		return true;
+	}
 
 	if (State.Coins < Amount)
 	{
@@ -218,4 +230,30 @@ bool UTavernSubsystem::SpendCoins(int32 Amount)
 
 	State.Coins -= Amount;
 	return true;
+}
+
+void UTavernSubsystem::ResetRun(bool bResetDayNr)
+{
+	State.TimeOfDay = ETavernTimeOfDay::Day;
+
+	if (bResetDayNr)
+	{
+		State.DayNr = 1;
+	}
+
+	State.Vibe = 0;
+	State.Cleanliness = 0;
+
+	State.Coins = 10;
+	State.PreparedFood = 0;
+
+	for (auto& Pair : Inventory)
+	{
+		Pair.Value = 0;
+	}
+
+	OnTimeChanged.Broadcast(State.TimeOfDay);
+	OnDayChanged.Broadcast(State.DayNr);
+	OnVibeChanged.Broadcast(State.Vibe);
+	OnCleanlinessChanged.Broadcast(State.Cleanliness);
 }

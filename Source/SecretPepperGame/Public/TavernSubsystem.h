@@ -122,6 +122,10 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Tavern|Currency")
 	bool SpendCoins(int32 Amount);
 
+	// This is the one you call from your "Back to Main Menu" button.
+	UFUNCTION(BlueprintCallable, Category = "Tavern")
+	void ResetRun(bool bResetDayNr = true);
+
 	UPROPERTY(BlueprintAssignable, Category = "Tavern|Events")
 	FTavernTimeChanged OnTimeChanged;
 

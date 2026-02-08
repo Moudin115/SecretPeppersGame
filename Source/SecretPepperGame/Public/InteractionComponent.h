@@ -29,6 +29,10 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Interact")
 	FName InteractionCameraTag = TEXT("InteractionCamera");
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Interaction")
+	bool bInteractionEnabled = true;
+
+
 	UFUNCTION(BlueprintCallable, Category = "Interact")
 	bool TryInteract();
 

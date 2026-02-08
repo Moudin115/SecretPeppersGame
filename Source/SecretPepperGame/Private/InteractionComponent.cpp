@@ -108,6 +108,9 @@ bool UInteractionComponent::TraceForInteractable(FHitResult& OutHit) const
 
 bool UInteractionComponent::TryInteract()
 {
+	if (!bInteractionEnabled) return false;
+
+
 	UE_LOG(LogTemp, Log, TEXT("Interact pressed, owner %s"), GetOwner() ? *GetOwner()->GetName() : TEXT("None"));
 	ScreenLog(TEXT("Interact pressed"));
 

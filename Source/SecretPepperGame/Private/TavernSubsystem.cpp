@@ -145,6 +145,7 @@ void UTavernSubsystem::AddIngredient(ETavernIngredient Type, int32 Amount)
 
 	const int32 NewValue = GetIngredientCount(Type) + Amount;
 	Inventory.FindOrAdd(Type) = NewValue;
+	OnInventoryChanged.Broadcast();
 }
 
 bool UTavernSubsystem::ConsumeIngredient(ETavernIngredient Type, int32 Amount)
@@ -161,6 +162,7 @@ bool UTavernSubsystem::ConsumeIngredient(ETavernIngredient Type, int32 Amount)
 	}
 
 	Inventory.FindOrAdd(Type) = Current - Amount;
+	OnInventoryChanged.Broadcast();
 	return true;
 }
 
@@ -196,9 +198,17 @@ bool UTavernSubsystem::ConsumePreparedFood(int32 Amount)
 
 void UTavernSubsystem::ClearInventory()
 {
+	bool bChanged = false;
 	for (auto& Pair : Inventory)
 	{
+		bChanged |= (Pair.Value != 0);
 		Pair.Value = 0;
+	}
+
+	// Notify once after every ingredient has been cleared.
+	if (bChanged)
+	{
+		OnInventoryChanged.Broadcast();
 	}
 }
 
@@ -252,8 +262,11 @@ void UTavernSubsystem::ResetRun(bool bResetDayNr)
 		Pair.Value = 0;
 	}
 
+	// All run data is reset before observers clear or rebuild their own state.
+	OnRunReset.Broadcast();
 	OnTimeChanged.Broadcast(State.TimeOfDay);
 	OnDayChanged.Broadcast(State.DayNr);
 	OnVibeChanged.Broadcast(State.Vibe);
 	OnCleanlinessChanged.Broadcast(State.Cleanliness);
+	OnInventoryChanged.Broadcast();
 }

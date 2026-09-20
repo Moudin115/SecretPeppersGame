@@ -50,6 +50,10 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FTavernVibeChanged, int32, NewVibe);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FTavernCleanlinessChanged, int32, NewCleanliness);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FTavernDayChanged, int32, NewDayNr);
 
+// Observers read current ingredient counts through GetIngredientCount.
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FTavernInventoryChanged);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FTavernRunReset);
+
 UCLASS(BlueprintType)
 class SECRETPEPPERGAME_API UTavernSubsystem : public UGameInstanceSubsystem
 {
@@ -137,6 +141,14 @@ public:
 
 	UPROPERTY(BlueprintAssignable, Category = "Tavern|Events")
 	FTavernDayChanged OnDayChanged;
+
+	// Broadcast after an ingredient inventory change, or when ResetRun refreshes it.
+	UPROPERTY(BlueprintAssignable, Category = "Tavern|Events")
+	FTavernInventoryChanged OnInventoryChanged;
+
+	// Lets objective managers clear progress when this subsystem starts a new run.
+	UPROPERTY(BlueprintAssignable, Category = "Tavern|Events")
+	FTavernRunReset OnRunReset;
 
 protected:
 	UPROPERTY(BlueprintReadOnly, Category = "Tavern")

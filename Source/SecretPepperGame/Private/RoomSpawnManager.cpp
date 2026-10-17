@@ -22,31 +22,40 @@ void ARoomSpawnManager::SpawnForRoom()
 		ASpawnPoint* Point = *It;
 		if (!Point) continue;
 		if (Point->IsOccupied()) continue;
+		if (Point->LocalWeightMultiplier <= 0.0f) continue;
 		if (!Point->SpawnTable) continue;
 
 		const TArray<FSpawnEntry>& Entries = Point->SpawnTable->Entries;
 		if (Entries.Num() == 0) continue;
 
+		// Empty room requirements allow an entry at any spawn point.
+		const auto IsEligible = [Point](const FSpawnEntry& Entry)
+		{
+			return Entry.ItemClass != nullptr
+				&& FMath::IsFinite(Entry.Weight)
+				&& Entry.Weight > 0.0f
+				&& Point->SpawnPointTags.HasAll(Entry.RoomTags);
+		};
+
 		float TotalWeight = 0.0f;
 		for (const FSpawnEntry& Entry : Entries)
 		{
-			if (!Entry.ItemClass) continue;
-			if (Entry.Weight <= 0.0f) continue;
+			if (!IsEligible(Entry)) continue;
 			TotalWeight += Entry.Weight;
 		}
 		if (TotalWeight <= 0.0f) continue;
 
-		const float Roll = FMath::FRandRange(0.0f, TotalWeight);
+		// FRand returns [0, 1), so the upper bound stays exclusive.
+		const float Roll = FMath::FRand() * TotalWeight;
 		float Running = 0.0f;
 
 		const FSpawnEntry* Picked = nullptr;
 		for (const FSpawnEntry& Entry : Entries)
 		{
-			if (!Entry.ItemClass) continue;
-			if (Entry.Weight <= 0.0f) continue;
+			if (!IsEligible(Entry)) continue;
 
 			Running += Entry.Weight;
-			if (Roll <= Running)
+			if (Roll < Running)
 			{
 				Picked = &Entry;
 				break;

@@ -274,4 +274,6 @@ void UTavernSubsystem::ResetRun(bool bResetDayNr)
 	OnVibeChanged.Broadcast(State.Vibe);
 	OnCleanlinessChanged.Broadcast(State.Cleanliness);
 	OnInventoryChanged.Broadcast();
+	OnCoinsChanged.Broadcast(State.Coins);
+	OnPreparedFoodChanged.Broadcast(State.PreparedFood);
 }

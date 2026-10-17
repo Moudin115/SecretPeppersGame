@@ -133,7 +133,7 @@ int32 UTavernSubsystem::GetIngredientCount(ETavernIngredient Type) const
 
 bool UTavernSubsystem::HasIngredient(ETavernIngredient Type, int32 Amount) const
 {
-	return GetIngredientCount(Type) >= Amount;
+	return Amount >= 0 && GetIngredientCount(Type) >= Amount;
 }
 
 void UTavernSubsystem::AddIngredient(ETavernIngredient Type, int32 Amount)
@@ -143,17 +143,18 @@ void UTavernSubsystem::AddIngredient(ETavernIngredient Type, int32 Amount)
 		return;
 	}
 
-	const int32 NewValue = GetIngredientCount(Type) + Amount;
+	const int32 NewValue = static_cast<int32>(FMath::Min(static_cast<int64>(GetIngredientCount(Type)) + Amount, static_cast<int64>(MAX_int32)));
+	if (NewValue == GetIngredientCount(Type)) return;
 	Inventory.FindOrAdd(Type) = NewValue;
 	OnInventoryChanged.Broadcast();
+	OnCoinsChanged.Broadcast(State.Coins);
+	OnPreparedFoodChanged.Broadcast(State.PreparedFood);
 }
 
 bool UTavernSubsystem::ConsumeIngredient(ETavernIngredient Type, int32 Amount)
 {
-	if (Amount <= 0)
-	{
-		return true;
-	}
+	if (Amount < 0) return false;
+	if (Amount == 0) return true;
 
 	const int32 Current = GetIngredientCount(Type);
 	if (Current < Amount)
@@ -177,15 +178,16 @@ void UTavernSubsystem::AddPreparedFood(int32 Amount)
 	{
 		return;
 	}
-	State.PreparedFood += Amount;
+	const int32 NewValue = static_cast<int32>(FMath::Min(static_cast<int64>(State.PreparedFood) + Amount, static_cast<int64>(MAX_int32)));
+	if (NewValue == State.PreparedFood) return;
+	State.PreparedFood = NewValue;
+	OnPreparedFoodChanged.Broadcast(State.PreparedFood);
 }
 
 bool UTavernSubsystem::ConsumePreparedFood(int32 Amount)
 {
-	if (Amount <= 0)
-	{
-		return true;
-	}
+	if (Amount < 0) return false;
+	if (Amount == 0) return true;
 
 	if (State.PreparedFood < Amount)
 	{
@@ -193,6 +195,7 @@ bool UTavernSubsystem::ConsumePreparedFood(int32 Amount)
 	}
 
 	State.PreparedFood -= Amount;
+	OnPreparedFoodChanged.Broadcast(State.PreparedFood);
 	return true;
 }
 
@@ -223,15 +226,16 @@ void UTavernSubsystem::AddCoins(int32 Amount)
 	{
 		return;
 	}
-	State.Coins += Amount;
+	const int32 NewValue = static_cast<int32>(FMath::Min(static_cast<int64>(State.Coins) + Amount, static_cast<int64>(MAX_int32)));
+	if (NewValue == State.Coins) return;
+	State.Coins = NewValue;
+	OnCoinsChanged.Broadcast(State.Coins);
 }
 
 bool UTavernSubsystem::SpendCoins(int32 Amount)
 {
-	if (Amount <= 0)
-	{
-		return true;
-	}
+	if (Amount < 0) return false;
+	if (Amount == 0) return true;
 
 	if (State.Coins < Amount)
 	{
@@ -239,6 +243,7 @@ bool UTavernSubsystem::SpendCoins(int32 Amount)
 	}
 
 	State.Coins -= Amount;
+	OnCoinsChanged.Broadcast(State.Coins);
 	return true;
 }
 

@@ -1,7 +1,5 @@
 // TavernNPCBase.cpp
 #include "TavernNPCBase.h"
-#include "Kismet/GameplayStatics.h"
-#include "Subsystems/GameInstanceSubsystem.h"
 
 ATavernNPCBase::ATavernNPCBase()
 {

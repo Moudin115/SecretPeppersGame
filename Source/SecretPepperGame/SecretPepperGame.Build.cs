@@ -14,10 +14,5 @@ public class SecretPepperGame : ModuleRules
             "InputCore",
             "GameplayTags"
         });
-
-        PrivateDependencyModuleNames.AddRange(new string[]
-        {
-            "GameplayTags"
-        });
     }
 }

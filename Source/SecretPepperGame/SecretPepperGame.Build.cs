@@ -12,7 +12,14 @@ public class SecretPepperGame : ModuleRules
             "CoreUObject",
             "Engine",
             "InputCore",
-            "GameplayTags"
+            "GameplayTags",
+            "UMG"
+        });
+
+        PrivateDependencyModuleNames.AddRange(new string[]
+        {
+            "Slate",
+            "SlateCore"
         });
     }
 }

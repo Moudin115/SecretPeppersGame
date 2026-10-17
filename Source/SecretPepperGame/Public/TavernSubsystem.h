@@ -52,6 +52,8 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FTavernDayChanged, int32, NewDayNr);
 
 // Observers read current ingredient counts through GetIngredientCount.
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FTavernInventoryChanged);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FTavernCoinsChanged, int32, NewCoins);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FTavernPreparedFoodChanged, int32, NewPreparedFood);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FTavernRunReset);
 
 UCLASS(BlueprintType)
@@ -145,6 +147,12 @@ public:
 	// Broadcast after an ingredient inventory change, or when ResetRun refreshes it.
 	UPROPERTY(BlueprintAssignable, Category = "Tavern|Events")
 	FTavernInventoryChanged OnInventoryChanged;
+
+	UPROPERTY(BlueprintAssignable, Category = "Tavern|Events")
+	FTavernCoinsChanged OnCoinsChanged;
+
+	UPROPERTY(BlueprintAssignable, Category = "Tavern|Events")
+	FTavernPreparedFoodChanged OnPreparedFoodChanged;
 
 	// Lets objective managers clear progress when this subsystem starts a new run.
 	UPROPERTY(BlueprintAssignable, Category = "Tavern|Events")

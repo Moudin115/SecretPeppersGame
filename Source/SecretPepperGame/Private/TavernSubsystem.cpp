@@ -147,8 +147,6 @@ void UTavernSubsystem::AddIngredient(ETavernIngredient Type, int32 Amount)
 	if (NewValue == GetIngredientCount(Type)) return;
 	Inventory.FindOrAdd(Type) = NewValue;
 	OnInventoryChanged.Broadcast();
-	OnCoinsChanged.Broadcast(State.Coins);
-	OnPreparedFoodChanged.Broadcast(State.PreparedFood);
 }
 
 bool UTavernSubsystem::ConsumeIngredient(ETavernIngredient Type, int32 Amount)

@@ -135,16 +135,21 @@ FText UTavernTextLibrary::GetRandomRumorNoRepeat(ETavernMood Mood, FText LastRum
 		return Lines[0];
 	}
 
-	int32 Tries = 6;
-	while (Tries-- > 0)
+	TArray<int32> Candidates;
+	Candidates.Reserve(N);
+	for (int32 Index = 0; Index < N; ++Index)
 	{
-		const FText Pick = Lines[FMath::RandRange(0, N - 1)];
-		if (!Pick.EqualTo(LastRumor))
+		if (!Lines[Index].EqualTo(LastRumor))
 		{
-			bOutChanged = true;
-			return Pick;
+			Candidates.Add(Index);
 		}
 	}
 
-	return Lines[FMath::RandRange(0, N - 1)];
+	if (Candidates.IsEmpty())
+	{
+		return Lines[0];
+	}
+
+	bOutChanged = true;
+	return Lines[Candidates[FMath::RandRange(0, Candidates.Num() - 1)]];
 }

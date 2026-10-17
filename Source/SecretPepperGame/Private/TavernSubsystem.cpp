@@ -51,7 +51,10 @@ void UTavernSubsystem::SetDayNr(int32 NewDayNr)
 
 void UTavernSubsystem::AdvanceDay()
 {
-	SetDayNr(State.DayNr + 1);
+	if (State.DayNr < MAX_int32)
+	{
+		SetDayNr(State.DayNr + 1);
+	}
 }
 
 int32 UTavernSubsystem::ClampVibe(int32 InVibe) const
@@ -102,7 +105,8 @@ void UTavernSubsystem::SetVibe(int32 NewVibe)
 
 void UTavernSubsystem::AddVibe(int32 Delta)
 {
-	SetVibe(State.Vibe + Delta);
+	const int64 Result = static_cast<int64>(State.Vibe) + Delta;
+	SetVibe(static_cast<int32>(FMath::Clamp(Result, static_cast<int64>(FMath::Min(VibeMin, VibeMax)), static_cast<int64>(FMath::Max(VibeMin, VibeMax)))));
 }
 
 void UTavernSubsystem::SetCleanliness(int32 NewCleanliness)
@@ -119,7 +123,8 @@ void UTavernSubsystem::SetCleanliness(int32 NewCleanliness)
 
 void UTavernSubsystem::AddCleanliness(int32 Delta)
 {
-	SetCleanliness(State.Cleanliness + Delta);
+	const int64 Result = static_cast<int64>(State.Cleanliness) + Delta;
+	SetCleanliness(static_cast<int32>(FMath::Clamp(Result, static_cast<int64>(FMath::Min(CleanlinessMin, CleanlinessMax)), static_cast<int64>(FMath::Max(CleanlinessMin, CleanlinessMax)))));
 }
 
 int32 UTavernSubsystem::GetIngredientCount(ETavernIngredient Type) const

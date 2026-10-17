@@ -57,7 +57,7 @@ bool UInteractionComponent::ResolveInteractionCamera()
 
 bool UInteractionComponent::GetTraceStartEnd(FVector& OutStart, FVector& OutEnd) const
 {
-	if (CachedInteractionCamera)
+	if (IsValid(CachedInteractionCamera.Get()))
 	{
 		OutStart = CachedInteractionCamera->GetComponentLocation();
 		OutEnd = OutStart + (CachedInteractionCamera->GetForwardVector() * TraceDistance);
@@ -86,7 +86,7 @@ bool UInteractionComponent::TraceForInteractable(FHitResult& OutHit) const
 {
 	FVector Start;
 	FVector End;
-	if (!GetTraceStartEnd(Start, End)) return false;
+	if (TraceDistance <= 0.0f || !GetWorld() || !GetTraceStartEnd(Start, End)) return false;
 
 	FCollisionQueryParams Params(SCENE_QUERY_STAT(InteractTrace), true, GetOwner());
 	Params.bReturnPhysicalMaterial = false;
@@ -110,7 +110,6 @@ bool UInteractionComponent::TryInteract()
 {
 	if (!bInteractionEnabled) return false;
 
-
 	UE_LOG(LogTemp, Log, TEXT("Interact pressed, owner %s"), GetOwner() ? *GetOwner()->GetName() : TEXT("None"));
 	ScreenLog(TEXT("Interact pressed"));
 
@@ -124,6 +123,7 @@ bool UInteractionComponent::TryInteract()
 
 	AActor* HitActor = Hit.GetActor();
 	UPrimitiveComponent* HitComp = Hit.GetComponent();
+	APawn* Interactor = Cast<APawn>(GetOwner());
 
 	UE_LOG(LogTemp, Log, TEXT("Interact hit, actor %s, component %s"),
 		HitActor ? *HitActor->GetName() : TEXT("None"),
@@ -131,7 +131,6 @@ bool UInteractionComponent::TryInteract()
 
 	if (HitActor && HitActor->GetClass()->ImplementsInterface(UInteractable::StaticClass()))
 	{
-		APawn* Interactor = Cast<APawn>(GetOwner());
 		const bool bCan = IInteractable::Execute_CanInteract(HitActor, Interactor);
 		if (!bCan)
 		{
@@ -148,7 +147,6 @@ bool UInteractionComponent::TryInteract()
 
 	if (HitComp && HitComp->GetClass()->ImplementsInterface(UInteractable::StaticClass()))
 	{
-		APawn* Interactor = Cast<APawn>(GetOwner());
 		const bool bCan = IInteractable::Execute_CanInteract(HitComp, Interactor);
 		if (!bCan)
 		{

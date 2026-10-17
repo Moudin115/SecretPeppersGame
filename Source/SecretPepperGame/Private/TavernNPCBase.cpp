@@ -17,8 +17,8 @@ void ATavernNPCBase::BeginPlay()
 
 	if (TavernSubsystem)
 	{
-		TavernSubsystem->OnTimeChanged.AddDynamic(this, &ATavernNPCBase::HandleTimeChanged);
-		TavernSubsystem->OnVibeChanged.AddDynamic(this, &ATavernNPCBase::HandleVibeChanged);
+		TavernSubsystem->OnTimeChanged.AddUniqueDynamic(this, &ATavernNPCBase::HandleTimeChanged);
+		TavernSubsystem->OnVibeChanged.AddUniqueDynamic(this, &ATavernNPCBase::HandleVibeChanged);
 
 		RefreshPresenceFromState();
 	}
@@ -51,7 +51,7 @@ void ATavernNPCBase::RefreshPresenceFromState()
 {
 	if (!TavernSubsystem) return;
 
-	const FTavernState S = TavernSubsystem->GetState();
+	const FTavernState& S = TavernSubsystem->GetState();
 
 	ETavernNpcPresence NewPresence = ETavernNpcPresence::Observing;
 
@@ -69,10 +69,6 @@ void ATavernNPCBase::RefreshPresenceFromState()
 	{
 		NewPresence = ETavernNpcPresence::Warm;
 	}
-	else
-	{
-		NewPresence = ETavernNpcPresence::Observing;
-	}
 
 	if (Presence != NewPresence)
 	{
@@ -88,7 +84,7 @@ bool ATavernNPCBase::CanInteract_Implementation(APawn* Interactor) const
 
 FText ATavernNPCBase::GetInteractPrompt_Implementation() const
 {
-	return FText::FromString(TEXT("Talk"));
+	return NSLOCTEXT("TavernNPC", "InteractTalk", "Talk");
 }
 
 void ATavernNPCBase::Interact_Implementation(APawn* Interactor)
